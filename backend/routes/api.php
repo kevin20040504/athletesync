@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\Auth\AuthController;
 use App\Http\Controllers\Api\V1\CalendarController;
+use App\Http\Controllers\Api\V1\ConflictController;
 use App\Http\Controllers\Api\V1\EventController;
 use App\Http\Controllers\Api\V1\HealthController;
 use Illuminate\Support\Facades\Route;
@@ -30,6 +31,8 @@ Route::prefix('v1')->group(function () {
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/calendar', CalendarController::class);
+        Route::get('/conflicts', [ConflictController::class, 'index']);
+        Route::post('/conflicts/preview', [ConflictController::class, 'preview']);
         Route::apiResource('events', EventController::class)->except('index');
     });
 });

@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Events\CalendarRequest;
-use App\Models\Event;
-use App\Services\Recurrence;
+use App\Services\Calendar;
+use App\Support\Occurrence;
 use Illuminate\Http\JsonResponse;
 
 /**
@@ -14,32 +14,12 @@ use Illuminate\Http\JsonResponse;
  */
 class CalendarController extends Controller
 {
-    public function __invoke(CalendarRequest $request, Recurrence $recurrence): JsonResponse
+    public function __invoke(CalendarRequest $request, Calendar $calendar): JsonResponse
     {
-        $from = $request->from();
-        $to = $request->to();
+        $occurrences = $calendar->forUser($request->user(), $request->from(), $request->to());
 
-        $occurrences = $request->user()->events()
-            ->overlapping($from, $to)
-            ->get()
-            ->flatMap(fn (Event $event) => array_map(fn (array $occurrence) => [
-                'event_id' => $event->id,
-                'title' => $event->title,
-                'category' => $event->category,
-                'location' => $event->location,
-                'all_day' => $event->all_day,
-                'recurring' => $event->isRecurring(),
-                'starts_at' => $occurrence['starts_at'],
-                'ends_at' => $occurrence['ends_at'],
-            ], $recurrence->occurrences($event, $from, $to)))
-            ->sortBy(fn (array $occurrence) => $occurrence['starts_at'])
-            ->map(fn (array $occurrence) => [
-                ...$occurrence,
-                'starts_at' => $occurrence['starts_at']->toIso8601ZuluString(),
-                'ends_at' => $occurrence['ends_at']->toIso8601ZuluString(),
-            ])
-            ->values();
-
-        return response()->json(['data' => $occurrences]);
+        return response()->json([
+            'data' => $occurrences->map(fn (Occurrence $occurrence) => $occurrence->toArray()),
+        ]);
     }
 }
