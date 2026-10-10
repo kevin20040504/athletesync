@@ -1,0 +1,112 @@
+@import 'tailwindcss';
+
+/* Dark mode is controlled by a `dark` class on <html> (see index.html). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Design tokens. Components use semantic names (bg-surface, text-muted,
+ * border-line, bg-accent, text-cat-game ...) and never raw hex values, so
+ * light/dark mode is handled here in one place.
+ */
+:root {
+  --bg: #f5f7fa;
+  --surface: #ffffff;
+  --surface-2: #eef1f5;
+  --line: #dde2ea;
+  --text: #0f172a;
+  --muted: #5b6577;
+  --accent: #4d7c0f;          /* lime, darkened for contrast on light surfaces */
+  --accent-strong: #3f6212;
+  --accent-soft: #ecfccb;
+  --on-accent: #ffffff;
+  --danger: #b91c1c;
+  --warning: #a16207;
+  --success: #15803d;
+
+  /* Event categories (WCAG AA on light surfaces) */
+  --cat-class: #2563eb;
+  --cat-exam: #dc2626;
+  --cat-practice: #059669;
+  --cat-game: #d97706;
+  --cat-gym: #ea580c;
+  --cat-personal: #9333ea;
+  --cat-study: #0891b2;
+  --cat-recovery: #64748b;
+}
+
+.dark {
+  --bg: #0b1120;
+  --surface: #111a2e;
+  --surface-2: #17223a;
+  --line: #24314d;
+  --text: #e6ebf4;
+  --muted: #94a0b8;
+  --accent: #a3e635;          /* electric lime on navy */
+  --accent-strong: #bef264;
+  --accent-soft: #1f2e14;
+  --on-accent: #0b1120;
+  --danger: #f87171;
+  --warning: #fbbf24;
+  --success: #4ade80;
+
+  --cat-class: #60a5fa;
+  --cat-exam: #f87171;
+  --cat-practice: #34d399;
+  --cat-game: #fbbf24;
+  --cat-gym: #fb923c;
+  --cat-personal: #c084fc;
+  --cat-study: #22d3ee;
+  --cat-recovery: #94a3b8;
+}
+
+@theme inline {
+  --font-sans: 'Geist', ui-sans-serif, system-ui, 'Segoe UI', sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, Consolas, monospace;
+
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-soft: var(--accent-soft);
+  --color-on-accent: var(--on-accent);
+  --color-danger: var(--danger);
+  --color-warning: var(--warning);
+  --color-success: var(--success);
+
+  --color-cat-class: var(--cat-class);
+  --color-cat-exam: var(--cat-exam);
+  --color-cat-practice: var(--cat-practice);
+  --color-cat-game: var(--cat-game);
+  --color-cat-gym: var(--cat-gym);
+  --color-cat-personal: var(--cat-personal);
+  --color-cat-study: var(--cat-study);
+  --color-cat-recovery: var(--cat-recovery);
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+  html.dark {
+    color-scheme: dark;
+  }
+  body {
+    @apply bg-bg text-text font-sans antialiased;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-accent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

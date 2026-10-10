@@ -1,0 +1,7 @@
+# Each app has its own .gitignore (backend/, frontend/). Repo-wide extras:
+.DS_Store
+Thumbs.db
+*.log
+.env
+.env.*
+!.env.example
