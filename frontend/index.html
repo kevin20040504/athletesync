@@ -11,8 +11,7 @@
     <title>AthleteSync</title>
     <script>
       // Apply the theme before first paint to avoid a light/dark flash.
-      // The saved choice is a per-device convenience; signed-in users' theme
-      // will also be stored in their settings in the database.
+      // The choice is saved per device; without one, follow the OS setting.
       (function () {
         var stored = null
         try { stored = localStorage.getItem('athletesync-theme') } catch (e) {}
