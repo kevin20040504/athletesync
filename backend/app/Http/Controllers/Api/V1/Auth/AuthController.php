@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Requests\Profile\ProfileRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -58,6 +59,13 @@ class AuthController extends Controller
 
     public function user(Request $request): UserResource
     {
+        return new UserResource($request->user());
+    }
+
+    public function updateProfile(ProfileRequest $request): UserResource
+    {
+        $request->user()->update($request->validated());
+
         return new UserResource($request->user());
     }
 }

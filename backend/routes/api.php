@@ -5,6 +5,8 @@ use App\Http\Controllers\Api\V1\CalendarController;
 use App\Http\Controllers\Api\V1\ConflictController;
 use App\Http\Controllers\Api\V1\EventController;
 use App\Http\Controllers\Api\V1\HealthController;
+use App\Http\Controllers\Api\V1\StatsController;
+use App\Http\Controllers\Api\V1\TaskController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
@@ -26,6 +28,7 @@ Route::prefix('v1')->group(function () {
         Route::middleware('auth:sanctum')->group(function () {
             Route::post('/logout', [AuthController::class, 'logout']);
             Route::get('/user', [AuthController::class, 'user']);
+            Route::patch('/user', [AuthController::class, 'updateProfile']);
         });
     });
 
@@ -33,6 +36,8 @@ Route::prefix('v1')->group(function () {
         Route::get('/calendar', CalendarController::class);
         Route::get('/conflicts', [ConflictController::class, 'index']);
         Route::post('/conflicts/preview', [ConflictController::class, 'preview']);
+        Route::get('/stats', StatsController::class);
         Route::apiResource('events', EventController::class)->except('index');
+        Route::apiResource('tasks', TaskController::class);
     });
 });

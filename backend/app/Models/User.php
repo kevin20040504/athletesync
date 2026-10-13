@@ -56,4 +56,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Event::class);
     }
+
+    /**
+     * @return HasMany<Task, $this>
+     */
+    public function tasks(): HasMany
+    {
+        return $this->hasMany(Task::class);
+    }
 }
