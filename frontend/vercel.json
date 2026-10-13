@@ -4,8 +4,8 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "rewrites": [
-    { "source": "/api/:path*", "destination": "https://YOUR-BACKEND.up.railway.app/api/:path*" },
-    { "source": "/sanctum/:path*", "destination": "https://YOUR-BACKEND.up.railway.app/sanctum/:path*" },
+    { "source": "/api/:path*", "destination": "https://backend-production-29e14.up.railway.app/api/:path*" },
+    { "source": "/sanctum/:path*", "destination": "https://backend-production-29e14.up.railway.app/sanctum/:path*" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

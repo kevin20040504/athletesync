@@ -109,7 +109,14 @@ Vercel hosts the React app; Laravel and MySQL run on [Railway](https://railway.c
 **1. Backend on Railway**
 
 1. On railway.com, sign in with GitHub: **New Project → Deploy from GitHub repo → athletesync**.
-2. In the new service's **Settings**: set **Root Directory** to `/backend` and **Railway Config File** to `/backend/railway.json`. (The config file path does not follow the root directory.) It builds with Railpack and runs `php artisan migrate --force` before each deploy.
+2. In the new service's **Settings**, set:
+   - **Root Directory:** `/backend`
+   - **Pre-deploy Command:** `php artisan migrate --force`
+   - **Healthcheck Path:** `/api/v1/health`
+   - **Watch Paths:** `/backend/**`
+   - **Restart Policy:** On Failure
+
+   Railway builds Laravel automatically with Railpack. These settings live on the service, not in a config file, because Railway no longer accepts `railway.json` for new projects.
 3. **+ Create → Database → MySQL** in the same project. Keep the service name `MySQL`, because the variables below reference it by name.
 4. Generate an app key locally: `php artisan key:generate --show`. Use a new key; don't reuse your local one.
 5. In the backend service's **Variables → Raw Editor**, paste the following and fill in the two placeholders. Until step 3 of the Vercel section, use `athletesync.vercel.app` as a guess for your Vercel domain.
