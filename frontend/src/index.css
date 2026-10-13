@@ -23,15 +23,20 @@
   --warning: #a16207;
   --success: #15803d;
 
-  /* Event categories (WCAG AA on light surfaces) */
-  --cat-class: #2563eb;
-  --cat-exam: #dc2626;
-  --cat-practice: #059669;
-  --cat-game: #d97706;
-  --cat-gym: #ea580c;
-  --cat-personal: #9333ea;
-  --cat-study: #0891b2;
-  --cat-recovery: #64748b;
+  /*
+   * Event categories: a validated categorical palette (lightness band,
+   * chroma, colorblind and normal-vision separation, checked per mode).
+   * No 8 hues are all pairwise distinct, so a category's name is always
+   * shown next to its color; color is never the only cue.
+   */
+  --cat-class: #2a78d6;
+  --cat-game: #eb6834;
+  --cat-study: #1baf7a;
+  --cat-gym: #eda100;
+  --cat-personal: #e87ba4;
+  --cat-practice: #008300;
+  --cat-recovery: #6250d6;
+  --cat-exam: #e34948;
 }
 
 .dark {
@@ -49,14 +54,14 @@
   --warning: #fbbf24;
   --success: #4ade80;
 
-  --cat-class: #60a5fa;
-  --cat-exam: #f87171;
-  --cat-practice: #34d399;
-  --cat-game: #fbbf24;
-  --cat-gym: #fb923c;
-  --cat-personal: #c084fc;
-  --cat-study: #22d3ee;
-  --cat-recovery: #94a3b8;
+  --cat-class: #3987e5;
+  --cat-game: #d95926;
+  --cat-study: #199e70;
+  --cat-gym: #c98500;
+  --cat-personal: #d55181;
+  --cat-practice: #008300;
+  --cat-recovery: #9085e9;
+  --cat-exam: #e66767;
 }
 
 @theme inline {
@@ -102,6 +107,57 @@
   }
 }
 
+/*
+ * FullCalendar (classic theme) mapped onto our tokens, so it follows the
+ * light/dark toggle.
+ */
+.athletesync-calendar {
+  --fc-classic-button: var(--surface-2);
+  --fc-classic-button-border: var(--line);
+  --fc-classic-button-strong: var(--accent);
+  --fc-classic-button-strong-border: var(--accent);
+  --fc-classic-button-outline: var(--accent);
+  --fc-classic-button-foreground: var(--text);
+  --fc-classic-primary: var(--accent);
+  --fc-classic-primary-foreground: var(--on-accent);
+  --fc-classic-event: var(--accent);
+  --fc-classic-event-contrast: var(--on-accent);
+  --fc-classic-background-event: var(--accent);
+  --fc-classic-background-event-opacity: 15%;
+  --fc-classic-background-event-foreground-opacity: 50%;
+  --fc-classic-highlight: color-mix(in srgb, var(--accent) 18%, transparent);
+  --fc-classic-today: color-mix(in srgb, var(--accent) 8%, transparent);
+  --fc-classic-now: var(--danger);
+  --fc-classic-small-dot-width: 8px;
+  --fc-classic-large-dot-width: 10px;
+  --fc-classic-background: var(--surface);
+  --fc-classic-faint: color-mix(in srgb, var(--text) 4%, transparent);
+  --fc-classic-muted: color-mix(in srgb, var(--text) 8%, transparent);
+  --fc-classic-strong: color-mix(in srgb, var(--text) 14%, transparent);
+  --fc-classic-foreground: var(--text);
+  --fc-classic-faint-foreground: var(--muted);
+  --fc-classic-muted-foreground: var(--muted);
+  --fc-classic-border: var(--line);
+  --fc-classic-strong-border: var(--muted);
+  font-size: 0.875rem;
+}
+/*
+ * Events: a soft category tint with normal text (some category colors are
+ * too light to carry white text) and a solid category edge. --cat is set
+ * per event in CalendarPage.
+ */
+.athletesync-calendar .as-event {
+  background-color: color-mix(in srgb, var(--cat) 22%, var(--surface)) !important;
+  border-color: color-mix(in srgb, var(--cat) 22%, var(--surface)) !important;
+  border-left: 3px solid var(--cat) !important;
+  color: var(--text) !important;
+}
+/* Occurrences that overlap another event. */
+.athletesync-calendar .as-conflict {
+  outline: 2px solid var(--warning);
+  outline-offset: 1px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -110,3 +166,13 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Category edge color for calendar events (see .as-event). */
+.as-cat-class { --cat: var(--cat-class); }
+.as-cat-exam { --cat: var(--cat-exam); }
+.as-cat-study { --cat: var(--cat-study); }
+.as-cat-practice { --cat: var(--cat-practice); }
+.as-cat-game { --cat: var(--cat-game); }
+.as-cat-gym { --cat: var(--cat-gym); }
+.as-cat-recovery { --cat: var(--cat-recovery); }
+.as-cat-personal { --cat: var(--cat-personal); }

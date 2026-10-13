@@ -1,13 +1,14 @@
 import { useQuery } from '@tanstack/react-query'
-import { CheckCircle2, Database, Moon, RefreshCw, Server, Sun, XCircle } from 'lucide-react'
-import { useState } from 'react'
-import { api } from './api/client'
+import { CheckCircle2, Database, RefreshCw, Server, XCircle } from 'lucide-react'
+import { Link } from 'react-router'
+import { api } from '../api/client'
+import ThemeToggle from '../components/ThemeToggle'
 
 /**
- * Phase 2 setup check: confirms the frontend can reach the Laravel API
- * and that the API can reach MySQL. Replaced by the router in Phase 4.
+ * Setup check (/setup): confirms the frontend can reach the Laravel API
+ * and that the API can reach MySQL. Useful when setting up a new machine.
  */
-export default function App() {
+export default function SetupCheck() {
   const health = useQuery({
     queryKey: ['health'],
     queryFn: () => api.get('/health').then((res) => res.data.data),
@@ -75,6 +76,10 @@ export default function App() {
           </span>
         ))}
       </div>
+
+      <Link to="/" className="text-sm font-medium text-accent hover:underline">
+        Go to the app
+      </Link>
     </main>
   )
 }
@@ -92,31 +97,5 @@ function StatusRow({ icon: Icon, label, ok, loading, detail }) {
         <StateIcon className={`size-5 ${ok ? 'text-success' : 'text-danger'}`} aria-label={ok ? 'OK' : 'Failed'} />
       )}
     </li>
-  )
-}
-
-function ThemeToggle() {
-  const [dark, setDark] = useState(() => document.documentElement.classList.contains('dark'))
-
-  function toggle() {
-    const next = !dark
-    document.documentElement.classList.toggle('dark', next)
-    try {
-      localStorage.setItem('athletesync-theme', next ? 'dark' : 'light')
-    } catch {
-      // Storage can be unavailable (private mode); the toggle still works for this visit.
-    }
-    setDark(next)
-  }
-
-  return (
-    <button
-      type="button"
-      onClick={toggle}
-      aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
-      className="rounded-lg border border-line bg-surface p-2 text-muted hover:text-text"
-    >
-      {dark ? <Sun className="size-5" aria-hidden /> : <Moon className="size-5" aria-hidden />}
-    </button>
   )
 }
