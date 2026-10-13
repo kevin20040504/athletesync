@@ -16,6 +16,11 @@ return Application::configure(basePath: dirname(__DIR__))
         // Sanctum SPA authentication: requests from SANCTUM_STATEFUL_DOMAINS
         // get session cookies + CSRF protection instead of bearer tokens.
         $middleware->statefulApi();
+
+        // In production, requests arrive through Vercel's rewrite and Railway's
+        // proxy. Trusting them makes request()->ip() the visitor's address, so
+        // the login rate limit applies per visitor instead of to everyone at once.
+        $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions) {
         // Always answer API routes with JSON ({ "message": ..., "errors": ... }),

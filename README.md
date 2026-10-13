@@ -102,6 +102,62 @@ npm run screenshots         # same checks, and refreshes docs/screenshots
 
 The backend tests cover auth, validation, ownership (other users' data answers 404), timezone handling, recurrence across daylight-saving changes, range queries, conflict detection, the preview window, tasks and stats. The end-to-end test drives the real app in Chrome as the demo user: it logs in, uses every page in light and dark mode and at phone width, previews a conflicting event without saving it, and fails on any console error or failed request.
 
+## Deploying (Vercel + Railway)
+
+Vercel hosts the React app; Laravel and MySQL run on [Railway](https://railway.com), because Vercel has no official PHP runtime or MySQL. Vercel forwards `/api/*` and `/sanctum/*` to Railway ([frontend/vercel.json](frontend/vercel.json)), so the browser sees a single site and session cookies work exactly as in local development. The frontend needs no environment variables.
+
+**1. Backend on Railway**
+
+1. On railway.com, sign in with GitHub: **New Project → Deploy from GitHub repo → athletesync**.
+2. In the new service's **Settings**: set **Root Directory** to `/backend` and **Railway Config File** to `/backend/railway.json`. (The config file path does not follow the root directory.) It builds with Railpack and runs `php artisan migrate --force` before each deploy.
+3. **+ Create → Database → MySQL** in the same project. Keep the service name `MySQL`, because the variables below reference it by name.
+4. Generate an app key locally: `php artisan key:generate --show`. Use a new key; don't reuse your local one.
+5. In the backend service's **Variables → Raw Editor**, paste the following and fill in the two placeholders. Until step 3 of the Vercel section, use `athletesync.vercel.app` as a guess for your Vercel domain.
+
+   ```
+   APP_NAME=AthleteSync
+   APP_ENV=production
+   APP_DEBUG=false
+   APP_KEY=<output of key:generate --show>
+   APP_URL=https://<your-vercel-domain>
+   FRONTEND_URL=https://<your-vercel-domain>
+   SANCTUM_STATEFUL_DOMAINS=<your-vercel-domain>
+   SESSION_DRIVER=database
+   SESSION_SECURE_COOKIE=true
+   CACHE_STORE=database
+   QUEUE_CONNECTION=database
+   LOG_CHANNEL=stderr
+   LOG_LEVEL=warning
+   RAILPACK_SKIP_MIGRATIONS=true
+   DB_CONNECTION=mysql
+   DB_HOST=${{MySQL.MYSQLHOST}}
+   DB_PORT=${{MySQL.MYSQLPORT}}
+   DB_DATABASE=${{MySQL.MYSQLDATABASE}}
+   DB_USERNAME=${{MySQL.MYSQLUSER}}
+   DB_PASSWORD=${{MySQL.MYSQLPASSWORD}}
+   ```
+
+   `RAILPACK_SKIP_MIGRATIONS` stops Railpack from also migrating and seeding on every container start, since migrations already run once per deploy.
+6. **Settings → Networking → Generate Domain**. Open `https://<railway-domain>/api/v1/health`; it should show `"status":"ok","database":"connected"`.
+
+**2. Frontend on Vercel**
+
+1. In [frontend/vercel.json](frontend/vercel.json), replace both `YOUR-BACKEND.up.railway.app` with your Railway domain. Commit and push.
+2. On vercel.com: **Add New → Project → import athletesync**. Set **Root Directory** to `frontend`; Vite and the build settings are detected automatically. Add no environment variables, then click **Deploy**.
+3. If Vercel's domain differs from the one you guessed in Railway, update `APP_URL`, `FRONTEND_URL` and `SANCTUM_STATEFUL_DOMAINS` there. Railway redeploys on variable changes.
+
+**3. Check it works**
+
+On the Vercel URL:
+- Sign up, add a repeating event and a task.
+- Refresh while on `/calendar`; it should reload the page, not show a 404.
+- Log out and back in.
+- `https://<vercel-domain>/api/v1/health` should report the database as connected.
+
+Optionally, add a demo account through Railway's shell: `php artisan db:seed --class=DemoSeeder --force`. Note that its login (`demo@athletesync.test` / `demo-password`) is public.
+
+**After setup**, every push to `main` redeploys automatically. Vercel rebuilds the frontend, and Railway rebuilds the backend when files under `backend/` change. Vercel also builds a preview for every branch, but **login only works on the production domain**, the one listed in `SANCTUM_STATEFUL_DOMAINS`.
+
 ## Repository layout
 
 ```
